@@ -1,6 +1,7 @@
 package loiacono.renato.gui;
 
 import loiacono.renato.StringsHandler;
+import loiacono.renato.api.FTPClient;
 
 import javax.swing.*;
 
@@ -8,6 +9,7 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.event.*;
+import java.io.IOException;
 import java.util.Locale;
 
 /*
@@ -20,12 +22,20 @@ public class FTPClientGUI {
     int y;
     JFrame mainFrame;
     JTextArea logArea;
+    JTextField hostField;
+    JTextField portField;
 
     // Le variabili andrebbero spostate in un file a parte
     // ma la gui è solo un esempio
     int rightPanelWidth = 240;
 
     StringsHandler stringsHandler = new StringsHandler(Locale.getDefault());
+
+    FTPClient client;
+
+    private void connect() {
+
+    }
 
     public void start() {
         mainFrame = new JFrame("FTP Client");
@@ -123,7 +133,7 @@ public class FTPClientGUI {
         hostLabel.setLocation(10, 30);
         content.add(hostLabel);
 
-        JTextField hostField = new JTextField();
+        hostField = new JTextField();
         hostField.setBackground(new Color(32, 32, 32));
         hostField.setForeground(new Color(255, 255, 255));
         hostField.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -143,7 +153,7 @@ public class FTPClientGUI {
         portLabel.setLocation(210, 30);
         content.add(portLabel);
 
-        JTextField portField = new JTextField();
+        portField = new JTextField();
         portField.setBackground(new Color(32, 32, 32));
         portField.setForeground(new Color(255, 255, 255));
         portField.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -164,7 +174,14 @@ public class FTPClientGUI {
         connectButton.setLocation(320, 50);
         connectButton.setFocusPainted(false);
         connectButton.addActionListener(e -> {
-            // Qui va il codice per connettersi
+            String host = hostField.getText();
+            int port = Integer.parseInt(portField.getText());
+            try {
+                client = new FTPClient(host, port);
+            } catch (IOException ex) {
+                // TODO: mandare in Log il messaggio di errore.
+                throw new RuntimeException(ex);
+            }
         });
         content.add(connectButton);
 

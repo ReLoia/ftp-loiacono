@@ -54,6 +54,7 @@ public class Main {
 
         if (cmd.hasOption("G")) {
             new FTPClientGUI().start();
+            return;
         } else if (!cmd.hasOption("host") || !cmd.hasOption("port")) {
             System.out.println(stringsHandler.getString("missing_host_port"));
             System.exit(1);
