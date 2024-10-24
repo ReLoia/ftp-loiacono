@@ -2,14 +2,17 @@ package loiacono.renato.api;
 
 import loiacono.renato.api.data.Response;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.Socket;
 
 /**
  * Client FTP secondo il <a href="https://datatracker.ietf.org/doc/html/rfc959">RFC 959</a>.<br>
  *
  * ATTENZIONE: Il client non segue alla lettera le specifiche del RFC 959, ma si limita a implementare le funzionalità di base.
- *             Inoltre, il client non è scritto in maniera ottimale
+ *             Inoltre, il client non è scritto in maniera ottimale.
  *
  */
 public class FTPClient {
@@ -74,8 +77,6 @@ public class FTPClient {
                 } while (!responseMessage.startsWith(responseCode + " "));
                 responseMessage = sb.toString();
             }
-
-
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

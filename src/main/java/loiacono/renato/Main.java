@@ -1,18 +1,14 @@
 package loiacono.renato;
-import loiacono.renato.api.FTPClient;
+
 import loiacono.renato.cli.FTPClientCLI;
 import loiacono.renato.gui.FTPClientGUI;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.UnrecognizedOptionException;
+import org.apache.commons.cli.*;
 
 import java.util.Locale;
 
 /*
+CREDENZIALI GRATUITE DI TEST **NON MIE**
+
 ftp.dlptest.com 21
 dlpuser rNrKYTX9g7z3RgJRmxWuGHbeu
  */
@@ -53,7 +49,7 @@ public class Main {
         }
 
         if (cmd.hasOption("G")) {
-            new FTPClientGUI().start();
+            new FTPClientGUI();
             return;
         } else if (!cmd.hasOption("host") || !cmd.hasOption("port")) {
             System.out.println(stringsHandler.getString("missing_host_port"));
