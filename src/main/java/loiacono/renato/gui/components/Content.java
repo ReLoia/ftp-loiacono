@@ -1,11 +1,9 @@
 package loiacono.renato.gui.components;
 
-import loiacono.renato.api.FTPClient;
 import loiacono.renato.gui.FTPClientGUI;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 
 public class Content extends JPanel {
     public Content(FTPClientGUI INSTANCE, int width) {
@@ -77,13 +75,16 @@ public class Content extends JPanel {
         connectButton.setFocusPainted(false);
         connectButton.addActionListener(e -> {
             String host = hostField.getText();
-            int port = Integer.parseInt(portField.getText());
+            int port;
             try {
-                INSTANCE.client = new FTPClient(host, port);
-            } catch (IOException ex) {
-                // TODO: mandare in Log il messaggio di errore.
-                throw new RuntimeException(ex);
+                String prt = portField.getText();
+                if (prt.isEmpty()) return;
+                port = Integer.parseInt(prt);
+            } catch (NumberFormatException ex) {
+                INSTANCE.rightPanel.log(ex);
+                return;
             }
+            INSTANCE.openConnection(host, port);
         });
         this.add(connectButton);
     }

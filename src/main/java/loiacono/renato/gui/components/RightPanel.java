@@ -9,7 +9,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 
 public class RightPanel extends JPanel {
-    private JPanel logArea;
+    private final JPanel logArea;
 
     public enum Level {
         INFO,
@@ -17,7 +17,7 @@ public class RightPanel extends JPanel {
         ERROR
     }
 
-    private int width;
+    private final int width;
 
     public RightPanel(FTPClientGUI INSTANCE, int width) {
         this.width = width;
@@ -81,5 +81,11 @@ public class RightPanel extends JPanel {
 
     public void log(String message, Level level) {
         logArea.add(new LogElement(message, level, width));
+        this.revalidate();
+        this.repaint();
+    }
+
+    public void log(Exception e) {
+        log("%s: %s".formatted(e.getClass().getName(), e.getLocalizedMessage()), Level.ERROR);
     }
 }

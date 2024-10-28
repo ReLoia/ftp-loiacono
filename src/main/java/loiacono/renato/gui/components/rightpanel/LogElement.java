@@ -19,17 +19,20 @@ public class LogElement extends JPanel {
 
         switch (level) {
             case INFO -> {
-
+                tA.setForeground(Color.WHITE);
+                setOpaque(false);
             }
             case WARNING -> {
                 tA.setForeground(Color.YELLOW);
                 setBackground(new Color(48, 46, 7));
             }
             case ERROR -> {
+                tA.setForeground(Color.RED);
+                setBackground(new Color(49, 13, 7));
             }
         }
 
-        tA.setText(message + "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        tA.setText(message);
         tA.setEditable(false);
 
         setPreferredSize(new Dimension(width, 40));

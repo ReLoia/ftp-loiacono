@@ -2,12 +2,14 @@ package loiacono.renato.gui;
 
 import loiacono.renato.StringsHandler;
 import loiacono.renato.api.FTPClient;
+import loiacono.renato.api.data.Response;
 import loiacono.renato.gui.components.Content;
 import loiacono.renato.gui.components.RightPanel;
 import loiacono.renato.gui.components.TopBar;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 import java.util.Locale;
 
 /*
@@ -22,7 +24,7 @@ public class FTPClientGUI extends JFrame {
     public int y;
 //    public JFrame mainFrame;
 
-    private RightPanel rightPanel;
+    public RightPanel rightPanel;
     public JTextField hostField;
     public JTextField portField;
 
@@ -30,10 +32,31 @@ public class FTPClientGUI extends JFrame {
     // ma la gui è solo un esempio
     private final int rightPanelWidth = 240;
 
-    public FTPClient client;
+    private FTPClient client;
+
+    public void openConnection(String host, int port) {
+        new Thread(() -> {
+            try {
+                client = new FTPClient(host, port);
+                subscribeToControlReader();
+            } catch (IOException e) {
+                rightPanel.log(e);
+                e.printStackTrace();
+            //            throw new RuntimeException(e);
+            }
+        }).start();
+    }
+
+    private void subscribeToControlReader() {
+        new Thread(() -> {
+            while (true) {
+                Response response = client.getResponse();
+                rightPanel.log(response.message(), RightPanel.Level.INFO);
+            }
+        }).start();
+    }
 
     public FTPClientGUI() {
-//        mainFrame = new JFrame("FTP Client");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(800, 600);
 
@@ -68,13 +91,13 @@ public class FTPClientGUI extends JFrame {
         this.setVisible(true);
 
         // https://stackoverflow.com/questions/2000218/what-is-inline-thread
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                rightPanel.log("Prova", RightPanel.Level.WARNING);
-                rightPanel.revalidate();
-                rightPanel.repaint();
-            }
-        });
+      //  SwingUtilities.invokeLater(new Runnable() {
+        //    @Override
+        //    public void run() {
+        //        rightPanel.log("Prova", RightPanel.Level.WARNING);
+        //        rightPanel.log("Prova", RightPanel.Level.ERROR);
+        //        rightPanel.log("Prova", RightPanel.Level.INFO);
+        //    }
+        //});
     }
 }
