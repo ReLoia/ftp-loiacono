@@ -35,7 +35,10 @@ public class LogElement extends JPanel {
         tA.setText(message);
         tA.setEditable(false);
 
-        setPreferredSize(new Dimension(width, 20));
+        int lines = message.length() / 34 + 1;
+
+//        tA.setPreferredSize(new Dimension(width, 20));
+        this.setMaximumSize(new Dimension(width, 20 * lines));
 
         this.add(tA, BorderLayout.CENTER);
     }

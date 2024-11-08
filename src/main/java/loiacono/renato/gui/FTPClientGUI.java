@@ -19,6 +19,8 @@ import java.util.Locale;
 public class FTPClientGUI extends JFrame {
     public StringsHandler stringsHandler = new StringsHandler(Locale.getDefault());
 
+    boolean logging = true;
+
     // Posizione della finestra
     public int x;
     public int y;
@@ -35,6 +37,10 @@ public class FTPClientGUI extends JFrame {
     private FTPClient client;
 
     public void sendCommand(String command) {
+        if (client == null) {
+            rightPanel.log("Connection not established", RightPanel.Level.ERROR);
+            return;
+        }
         rightPanel.log(command, RightPanel.Level.INFO);
         client._sendCommand(command);
     }
@@ -44,17 +50,108 @@ public class FTPClientGUI extends JFrame {
             try {
                 client = new FTPClient(host, port);
                 subscribeToControlReader();
+                rightPanel.log("Connection established", RightPanel.Level.INFO);
+                login();
             } catch (IOException e) {
                 rightPanel.log(e);
+                if (client != null) {
+                    try {
+                        client.close();
+                    } catch (IOException ioException) {
+                        ioException.printStackTrace();
+                    } finally {
+                        clearLog();
+                    }
+                }
                 e.printStackTrace();
             //            throw new RuntimeException(e);
             }
         }).start();
     }
 
+    // ask username and password using JDialog
+    private void login() {
+        JDialog dialog = new JDialog(this, "Login", true);
+        dialog.setSize(300, 200);
+        dialog.setLocationRelativeTo(this);
+        dialog.setLayout(new GridLayout(3, 2));
+
+        JLabel userLabel = new JLabel("Username");
+        JTextField userField = new JTextField();
+        JLabel passLabel = new JLabel("Password");
+        JPasswordField passField = new JPasswordField();
+        JButton loginButton = new JButton("Login");
+        JButton cancelButton = new JButton("Cancel");
+
+        loginButton.addActionListener(e -> {
+            String user = userField.getText();
+            String pass = new String(passField.getPassword());
+            if (user.isEmpty() || pass.isEmpty()) {
+                JOptionPane.showMessageDialog(dialog, "Username and password are required", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Disable the dialog to prevent further input while processing
+            loginButton.setEnabled(false);
+            cancelButton.setEnabled(false);
+
+            // Process login in a separate thread
+            logging = false;
+            new Thread(() -> {
+                try {
+                    Response userResponse = client.sendCommand("USER " + user);
+                    if (userResponse.code() == Response.FTPResponseCode.USERNAME_OK) {
+                        Response passResponse = client.sendCommand("PASS " + pass);
+                        if (passResponse.code() == Response.FTPResponseCode.USER_LOGGED_IN) {
+                            SwingUtilities.invokeLater(() -> {
+                                dialog.dispose();
+                                rightPanel.log("Login successful", RightPanel.Level.INFO);
+                            });
+                            logging = true;
+                        } else {
+                            SwingUtilities.invokeLater(() -> {
+                                JOptionPane.showMessageDialog(dialog, "Invalid password", "Error", JOptionPane.ERROR_MESSAGE);
+                                loginButton.setEnabled(true);
+                                cancelButton.setEnabled(true);
+                            });
+                            logging = true;
+                        }
+                    } else {
+                        SwingUtilities.invokeLater(() -> {
+                            JOptionPane.showMessageDialog(dialog, "Invalid username", "Error", JOptionPane.ERROR_MESSAGE);
+                            loginButton.setEnabled(true);
+                            cancelButton.setEnabled(true);
+                        });
+                        logging = true;
+                    }
+                } finally {
+                    SwingUtilities.invokeLater(() -> {
+                        loginButton.setEnabled(true);
+                        cancelButton.setEnabled(true);
+                    });
+                    logging = true;
+                }
+            }).start();
+        });
+
+        cancelButton.addActionListener(e -> dialog.dispose());
+
+        dialog.add(userLabel);
+        dialog.add(userField);
+        dialog.add(passLabel);
+        dialog.add(passField);
+        dialog.add(loginButton);
+        dialog.add(cancelButton);
+        dialog.setVisible(true);
+    }
+
+    private void clearLog() {
+        rightPanel.clearLog();
+    }
+
     private void subscribeToControlReader() {
         new Thread(() -> {
-            while (true) {
+            while (logging) {
                 Response response = client.getResponse();
                 rightPanel.log(response.message(), RightPanel.Level.INFO);
             }

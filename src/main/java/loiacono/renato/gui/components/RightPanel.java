@@ -41,15 +41,17 @@ public class RightPanel extends JPanel {
         logArea.setBackground(new Color(54, 54, 54));
         logArea.setForeground(new Color(255, 255, 255));
         logArea.setFont(new Font("Arial", Font.PLAIN, 14));
-        logArea.setSize(width, 510);
-        logArea.setLocation(0, 20);
-//        logArea.setEditable(false);
+        logArea.setLayout(new BoxLayout(logArea, BoxLayout.Y_AXIS));
 
         JScrollPane scrollPane = new JScrollPane(logArea);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setSize(width, 510);
+        scrollPane.setLocation(0, 20);
+//        logArea.setEditable(false);
 
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-        this.add(logArea);
+        this.add(scrollPane);
 
         // Input
         JTextField inputField = new JTextField(INSTANCE.stringsHandler.getString("type_command"));
@@ -85,8 +87,15 @@ public class RightPanel extends JPanel {
         this.add(inputField);
     }
 
+    public void clearLog() {
+        logArea.removeAll();
+        this.revalidate();
+        this.repaint();
+    }
+
     public void log(String message, Level level) {
         logArea.add(new LogElement(message, level, width));
+        logArea.add(Box.createRigidArea(new Dimension(0, 5)));
         this.revalidate();
         this.repaint();
     }
