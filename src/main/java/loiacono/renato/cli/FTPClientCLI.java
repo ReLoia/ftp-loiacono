@@ -128,6 +128,9 @@ public class FTPClientCLI {
             case BAD_SEQUENCE:
                 System.out.println("ERROR: Bad sequence of commands.");
                 break;
+            case USERNAME_OK, HELP_MESSAGE, SYNTAX_ERROR:
+                // Lista di risposte che non necessitano di azioni particolari
+                break;
             default:
                 System.out.println("Unhandled response code: " + response.code());
                 return response.code();

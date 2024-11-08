@@ -34,6 +34,11 @@ public class FTPClientGUI extends JFrame {
 
     private FTPClient client;
 
+    public void sendCommand(String command) {
+        rightPanel.log(command, RightPanel.Level.INFO);
+        client._sendCommand(command);
+    }
+
     public void openConnection(String host, int port) {
         new Thread(() -> {
             try {

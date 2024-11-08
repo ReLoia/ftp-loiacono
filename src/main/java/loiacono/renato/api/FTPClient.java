@@ -83,15 +83,24 @@ public class FTPClient {
         return new Response(responseCode, responseMessage);
     }
 
-    public Response sendCommand(String command) {
+    /**
+     * Questo metodo invia un comando al server senza attendere la risposta.
+     * Utile per alcune comunicazioni via GUI.
+     * @param command
+     */
+    public void _sendCommand(String command) {
         try {
             // L'RFC 959 dice che i comandi devono essere terminati con CRLF
             controlWriter.write((command + "\r\n").getBytes());
             controlWriter.flush();
-            return getResponse();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Response sendCommand(String command) {
+        _sendCommand(command);
+        return getResponse();
     }
 
     public void openDataConnection(String ip, int port) throws IOException {

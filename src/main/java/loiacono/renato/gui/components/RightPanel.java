@@ -76,6 +76,12 @@ public class RightPanel extends JPanel {
                 }
             }
         });
+        inputField.addActionListener(e -> {
+            String command = inputField.getText();
+            if (command.isEmpty()) return;
+            INSTANCE.sendCommand(command);
+            inputField.setText("");
+        });
         this.add(inputField);
     }
 

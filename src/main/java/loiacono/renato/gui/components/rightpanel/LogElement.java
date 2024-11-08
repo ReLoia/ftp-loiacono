@@ -14,7 +14,7 @@ public class LogElement extends JPanel {
         tA.setWrapStyleWord(true);
         tA.setOpaque(false);
 
-        setBorder(new EmptyBorder(4, 0, 4, 0));
+        setBorder(new EmptyBorder(3, 2, 3, 2));
         setLayout(new BorderLayout());
 
         switch (level) {
@@ -35,7 +35,7 @@ public class LogElement extends JPanel {
         tA.setText(message);
         tA.setEditable(false);
 
-        setPreferredSize(new Dimension(width, 40));
+        setPreferredSize(new Dimension(width, 20));
 
         this.add(tA, BorderLayout.CENTER);
     }
