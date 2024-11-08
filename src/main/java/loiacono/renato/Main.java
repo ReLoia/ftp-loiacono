@@ -13,6 +13,11 @@ ftp.dlptest.com 21
 dlpuser rNrKYTX9g7z3RgJRmxWuGHbeu
  */
 
+/*
+ - https://sftpcloud.io/tools/free-ftp-server
+    eu-central-1.sftpcloud.io 21
+ */
+
 /**
  * Entry point del programma.
  * Gestisce le opzioni da riga di comando.
@@ -42,18 +47,15 @@ public class Main {
         }
         // Posso usare 'cmd' qui perchè se è null il programma è già terminato.
 
-        if (cmd.hasOption("H")) {
-            HelpFormatter formatter = new HelpFormatter();
-            formatter.printHelp("ftp-client [OPTIONS]", options);
-            System.exit(0); // Chiudo il programma dato che l'utente ha usato -H
-        }
-
         if (cmd.hasOption("G")) {
             new FTPClientGUI();
             return;
-        } else if (!cmd.hasOption("host") || !cmd.hasOption("port")) {
-            System.out.println(stringsHandler.getString("missing_host_port"));
-            System.exit(1);
+        }
+
+        if (cmd.hasOption("H") || !cmd.hasOption("host") || !cmd.hasOption("port")) {
+            HelpFormatter formatter = new HelpFormatter();
+            formatter.printHelp("ftp-client [OPTIONS]", options);
+            System.exit(0); // Chiudo il programma dato che l'utente ha usato -H
         }
 
         String host = cmd.getOptionValue("host");

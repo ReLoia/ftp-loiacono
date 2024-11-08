@@ -2,10 +2,7 @@ package loiacono.renato.api;
 
 import loiacono.renato.api.data.Response;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 
 /**
@@ -35,7 +32,7 @@ public class FTPClient {
     // Da qui si inviano i dati al server
     private OutputStream dataWriter = null;
     // Da qui si ricevono i dati dal server
-    private BufferedReader dataReader = null;
+    private BufferedInputStream dataReader = null;
 
     // Ho spostato la gestione degli errori alle classi che usano il Client
     public FTPClient(String host, int port) throws IOException {
@@ -66,6 +63,9 @@ public class FTPClient {
 
         try {
             responseMessage = controlReader.readLine();
+            if (responseMessage == null) {
+                throw new RuntimeException("Server closed the connection.");
+            }
             responseCode = responseMessage.substring(0, 3);
 
             if (responseMessage.charAt(3) == '-') {
@@ -106,22 +106,63 @@ public class FTPClient {
     public void openDataConnection(String ip, int port) throws IOException {
         dataSocket = new Socket(ip, port);
         dataWriter = dataSocket.getOutputStream();
-        dataReader = new BufferedReader(new InputStreamReader(dataSocket.getInputStream()));
+        dataReader = new BufferedInputStream(dataSocket.getInputStream());
     }
 
-    public String readData() throws IOException {
-        return dataReader.readLine();
+    public boolean isDataConnectionOpen() {
+        return dataSocket != null && dataSocket.isConnected() && !dataSocket.isClosed();
+    }
+
+    public byte[] readDataConnection() throws IOException {
+        byte[] buffer = new byte[4096]; // 4KB
+        int bytesRead;
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+        try {
+            while ((bytesRead = dataReader.read(buffer)) != -1) {
+                byteArrayOutputStream.write(buffer, 0, bytesRead);
+            }
+        } finally {
+            closeDataConnection();
+        }
+
+        return byteArrayOutputStream.toByteArray();
+    }
+
+    public void sendOnDataConnection(byte[] data) throws IOException {
+        try {
+            dataWriter.write(data);
+            dataWriter.flush();
+        } finally {
+            closeDataConnection();
+        }
     }
 
     public void closeDataConnection() throws IOException {
-        if (dataWriter != null) {
-            dataWriter.close();
+        if (dataWriter != null) dataWriter.close();
+        if (dataReader != null) dataReader.close();
+        if (dataSocket != null) dataSocket.close();
+
+    }
+
+    public void saveFile(String path, byte[] data) throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(path)) {
+            fos.write(data);
         }
-        if (dataReader != null) {
-            dataReader.close();
-        }
-        if (dataSocket != null) {
-            dataSocket.close();
+    }
+
+    public byte[] readLocalFile(String arg) {
+        try (FileInputStream fis = new FileInputStream(arg)) {
+            byte[] buffer = new byte[4096]; // 4KB
+            int bytesRead;
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                byteArrayOutputStream.write(buffer, 0, bytesRead);
+            }
+            return byteArrayOutputStream.toByteArray();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
