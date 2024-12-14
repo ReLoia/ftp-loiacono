@@ -25,9 +25,9 @@ public class FTPClient {
      */
 
     // Da qui si inviano i comandi al server
-    private OutputStream controlWriter = null;
+    private final OutputStream controlWriter;
     // Da qui si ricevono le risposte del server
-    private BufferedReader controlReader = null;
+    private final BufferedReader controlReader;
 
     // Da qui si inviano i dati al server
     private OutputStream dataWriter = null;
@@ -50,6 +50,7 @@ public class FTPClient {
         }
         if (controlSocket != null) {
             controlSocket.close();
+            controlSocket = null;
         }
     }
 
@@ -58,8 +59,8 @@ public class FTPClient {
      * Controlla se la risposta è multi-linea e la concatena in un'unica stringa.
      */
     public Response getResponse() {
-        String responseCode = null;
-        String responseMessage = null;
+        String responseCode;
+        String responseMessage;
 
         try {
             responseMessage = controlReader.readLine();
@@ -86,7 +87,6 @@ public class FTPClient {
     /**
      * Questo metodo invia un comando al server senza attendere la risposta.
      * Utile per alcune comunicazioni via GUI.
-     * @param command
      */
     public void _sendCommand(String command) {
         try {
@@ -151,8 +151,8 @@ public class FTPClient {
         }
     }
 
-    public byte[] readLocalFile(String arg) {
-        try (FileInputStream fis = new FileInputStream(arg)) {
+    public byte[] readLocalFile(String path) {
+        try (FileInputStream fis = new FileInputStream(path)) {
             byte[] buffer = new byte[4096]; // 4KB
             int bytesRead;
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
