@@ -50,6 +50,7 @@ public class FTPClient {
         }
         if (controlSocket != null) {
             controlSocket.close();
+            controlSocket = null;
         }
     }
 
@@ -86,7 +87,6 @@ public class FTPClient {
     /**
      * Questo metodo invia un comando al server senza attendere la risposta.
      * Utile per alcune comunicazioni via GUI.
-     * @param command
      */
     public void _sendCommand(String command) {
         try {
@@ -151,8 +151,8 @@ public class FTPClient {
         }
     }
 
-    public byte[] readLocalFile(String arg) {
-        try (FileInputStream fis = new FileInputStream(arg)) {
+    public byte[] readLocalFile(String path) {
+        try (FileInputStream fis = new FileInputStream(path)) {
             byte[] buffer = new byte[4096]; // 4KB
             int bytesRead;
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();

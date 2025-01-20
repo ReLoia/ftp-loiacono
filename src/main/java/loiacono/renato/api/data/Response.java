@@ -9,10 +9,12 @@ package loiacono.renato.api.data;
  * @param message
  */
 public record Response(FTPResponseCode code, String message) {
-
     /**
      * Questa classe conterrà gli enumeratori per i codici più comuni delle risposte FTP. <br>
      * Verra usata in handleResponse() per gestire le risposte più comuni.
+     * <p>
+     * OVVIAMENTE ha cucinato ChatGPT.  <br>
+     * La maggior parte di questi non ha utilizzo.
      */
     public enum FTPResponseCode {
         RESTART_MARKER("110"),

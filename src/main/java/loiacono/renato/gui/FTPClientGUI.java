@@ -14,17 +14,17 @@ import java.util.Locale;
 
 /*
  Allora, la gui fa proprio schifo.
+ Non vale nemmeno la pena controllarla dato che non ha nessuna funzionalità oltre all'invio dei comandi e ricezione delle risposte, non va neanche il login :U
  E' solo un esempio per arricchire il codice e poter utilizzare i thread.
  */
 public class FTPClientGUI extends JFrame {
     public StringsHandler stringsHandler = new StringsHandler(Locale.getDefault());
 
-    boolean logging = true;
+    private boolean logging = true;
 
     // Posizione della finestra
     public int x;
     public int y;
-//    public JFrame mainFrame;
 
     public RightPanel rightPanel;
     public JTextField hostField;
@@ -64,7 +64,6 @@ public class FTPClientGUI extends JFrame {
                     }
                 }
                 e.printStackTrace();
-            //            throw new RuntimeException(e);
             }
         }).start();
     }

@@ -6,6 +6,8 @@ import org.apache.commons.cli.*;
 
 import java.util.Locale;
 
+import static loiacono.renato.Utils.log;
+
 /*
 CREDENZIALI GRATUITE DI TEST **NON MIE**
 
@@ -27,11 +29,11 @@ public class Main {
         StringsHandler stringsHandler = new StringsHandler(Locale.getDefault());
 
         Options options = new Options();
-        options.addOption("H", "help", false, "Print this help message");
-        options.addOption("G", "gui", false, "Start the GUI");
+        options.addOption("H", "help", false, stringsHandler.getString("main_help_H"));
+        options.addOption("G", "gui", false, stringsHandler.getString("main_help_G"));
 
-        options.addOption("host", true, "The host to connect to");
-        options.addOption("P", "port", true, "The port to connect to");
+        options.addOption("host", true, stringsHandler.getString("main_help_h"));
+        options.addOption("P", "port", true, stringsHandler.getString("main_help_P"));
 
 
         CommandLineParser parser = new DefaultParser();
@@ -39,7 +41,7 @@ public class Main {
         try {
             cmd = parser.parse(options, args);
         } catch (UnrecognizedOptionException e) {
-            System.out.println(stringsHandler.getString("unrecognized_option", e.getOption()));
+            log(stringsHandler.getString("main_help_unrecognized_option", e.getOption()));
             System.exit(1);
             return;
         } catch (ParseException e) {

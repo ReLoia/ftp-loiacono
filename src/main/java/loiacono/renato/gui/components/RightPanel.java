@@ -46,7 +46,6 @@ public class RightPanel extends JPanel {
         JScrollPane scrollPane = new JScrollPane(logArea);
         scrollPane.setSize(width, 510);
         scrollPane.setLocation(0, 20);
-//        logArea.setEditable(false);
 
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);

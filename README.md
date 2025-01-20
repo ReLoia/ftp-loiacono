@@ -1,7 +1,17 @@
 # Loiacono's FTP 959 Client
 Really really REALLY simple FTP Client made with Java Sockets.  
-  
-### Requirements
+
+### Usage
+To run the client, you need to have Java installed on your machine.
+
+1. Download the latest release from the [releases page](https://github.com/ReLoia/ftp-loiacono/releases/latest)
+2. Execute the jar with `java -jar socket-<version>.jar`
+3. Follow the instructions on the screen
+
+#### Requirements
+- Java 17 or higher
+
+### Development Requirements
 The only external library used is `commons-cli` for parsing command line arguments.  
 You can find it [here](https://commons.apache.org/proper/commons-cli/).
 
