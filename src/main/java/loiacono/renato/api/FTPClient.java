@@ -25,9 +25,9 @@ public class FTPClient {
      */
 
     // Da qui si inviano i comandi al server
-    private OutputStream controlWriter = null;
+    private final OutputStream controlWriter;
     // Da qui si ricevono le risposte del server
-    private BufferedReader controlReader = null;
+    private final BufferedReader controlReader;
 
     // Da qui si inviano i dati al server
     private OutputStream dataWriter = null;
@@ -59,8 +59,8 @@ public class FTPClient {
      * Controlla se la risposta è multi-linea e la concatena in un'unica stringa.
      */
     public Response getResponse() {
-        String responseCode = null;
-        String responseMessage = null;
+        String responseCode;
+        String responseMessage;
 
         try {
             responseMessage = controlReader.readLine();
